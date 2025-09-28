@@ -18,12 +18,12 @@ The second problem is harder. Traditional benchmark suites such as SPEC CPU or P
 **OpenDwarfs** addresses this by organizing workloads around the *Berkeley Dwarfs* — a taxonomy of fundamental computational motifs such as dense linear algebra, sparse linear algebra, graph traversal, spectral methods, and structured grids. Instead of focusing on single applications, OpenDwarfs captures general computation and communication patterns that appear across many scientific and engineering problems. This makes it possible to study parallelism more systematically and compare performance across CPUs, GPUs, and other devices.  
 
 This repository provides a **truncated version of OpenDwarfs** (full version: [OpenDwarfs GitHub](https://github.com/opendwarfs/opendwarfs)) for the Capstone project. The included dwarfs/motifs are:  
-- **Branch and Bound** → `nqueens` (N-Queens search)  
+- **Branch and Bound** → `nqueens` (N-Queens)  
 - **Dense Linear Algebra** → `lud` (LU decomposition)  
 - **Graph Traversal** → `bfs` (Breadth-First Search)  
 - **Sparse Linear Algebra** → `spmv` (Sparse Matrix-Vector Multiplication)  
 - **Spectral Methods** → `fft` (Fast Fourier Transform)  
-- **Structured Grids** → `gol` (Game of Life simulation)  
+- **Structured Grids** → `gol` (Conway's Game of Life simulation)  
 
 # Objectives
 
