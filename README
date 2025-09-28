@@ -2,7 +2,6 @@
 
 ## Overview
 This repository is a **subset** of the [OpenDwarfs benchmark suite](https://github.com/opendwarfs/opendwarfs).  
- 
 OpenDwarfs is organized around the Berkeley Dwarfs taxonomy, which classifies computational patterns common in scientific and engineering applications.  
 
 ---
@@ -26,21 +25,6 @@ This repository provides a **truncated version of OpenDwarfs** (full version: [O
 - **Sparse Linear Algebra** → `spmv` (Sparse Matrix-Vector Multiplication)  
 - **Spectral Methods** → `fft` (Fast Fourier Transform)  
 - **Structured Grids** → `gol` (Game of Life simulation)  
-
----
-# Objectives
-
-**Required objectives:**  
-For each dwarf, the code to be parallelized is located in `<programname>_parallel.cpp` inside the directory for that dwarf.  
-- If working in groups of three, parallelize **all six workloads** (two dwarfs to be parallelized by each team member).  
-- Use OpenMP to parallelize the workload in `<programname>_parallel.cpp` adding appropriate OpenMP pragma directives.  
-
-**Additional objectives** (not necessarily in order of relevance; you may pick any one or more that you find interesting):  
-1. Pick one dwarf out of the six and attempt to optimize the code beyond what is achieved by the initial placement of OpenMP directives. Your approach may include modifications to the code, algorithm, data structure, the way the workload is parallelized, or any combination of these changes. (Example: assign threads to nonzero elements in SPMV using a COO data structure instead of row-centric parallelism with CSR.)  
-2. Use **OpenACC** to offload the computation to a GPU. Parallelize `<dwarf>_parallel.cpp` using OpenACC and evaluate runtimes on `glogin` GPU nodes. Compare CPU (OpenMP) vs GPU (OpenACC) performance and analyze the results.  
-3. Use **OpenMP 4.5** to offload computation to a GPU. Compare performance between CPU (OpenMP) and GPU (OpenMP offload), and optionally vs GPU (OpenACC). Comment on the relative difficulty/ease of programming with the different frameworks.  
-
-Refer to the README in each dwarf’s directory for compilation and execution details.  
 
 ---
 
@@ -68,6 +52,22 @@ Log in with `ssh <your_pid>@rlogin.cs.vt.edu` (or `glogin` for GPUs) and clone t
 
 ---
 
+# Objectives
+
+**Required objectives:**  
+For each dwarf, the code to be parallelized is located in `<dwarf>_parallel.cpp` inside the directory for that dwarf.  
+- If working in groups of three, parallelize all six workloads (two dwarfs to be parallelized by each team member).  
+- Use OpenMP by adding appropriate OpenMP pragma directives.  
+
+**Additional objectives** (not necessarily in order of relevance; you may pick any one or more that you find interesting):  
+1. Pick one application out of the six and attempt to optimize the code beyond what is achieved by the initial placement of OpenMP directives. Your approach may include modifications to the code, algorithm, data structure, the way the workload is parallelized, or any combination of these changes. (Example: assign threads to nonzero elements in SPMV using a COO data structure instead of row-centric parallelism with CSR.)  
+2. Use **OpenACC** to offload the computation to a GPU. Parallelize `<dwarf>_parallel.cpp` using OpenACC and evaluate runtimes on `glogin` GPU nodes. Compare CPU (OpenMP) vs GPU (OpenACC) performance and analyze the results.  
+3. Use **OpenMP 4.5** to offload computation to a GPU. Compare performance between CPU (OpenMP) and GPU (OpenMP offload), and optionally vs GPU (OpenACC). Comment on the relative difficulty/ease of programming with the different frameworks.  
+
+Refer to the README in each dwarf’s directory for compilation and execution details.  
+
+---
+
 # Compilation
 
 See the `README.md` inside each dwarf’s directory for detailed build/run instructions.
@@ -75,7 +75,7 @@ See the `README.md` inside each dwarf’s directory for detailed build/run instr
 ---
 
 # Parallelization
-The **workload to be parallelized** for this capstone is primarily located in the files named:
+The **parallelization work** for this capstone is primarily located in the files named:
 
 ```
 <program_name>_parallel.cpp
@@ -95,6 +95,11 @@ make
 ```
 This builds the `bfs` executable.
 
+Manual build (optional):  
+```bash
+g++ -O3 -std=c++17 main.cpp bfs_serial.cpp bfs_parallel.cpp -o bfs
+```
+
 ---
 
 ### How to run with different options
@@ -106,7 +111,7 @@ This builds the `bfs` executable.
 - Compares `bfs_parallel` against `bfs_serial` on a sample graph.  
 - Also runs `bfs_parallel` with 1, 2, 8, 16 threads and prints time + OK/MISMATCH.  
 
-**Performance evaluation**  
+**Profiling mode**  
 ```bash
 ./bfs -p
 ```
@@ -129,4 +134,4 @@ This builds the `bfs` executable.
 - `n` = number of vertices  
 - `m` = number of directed edges in CSR  
 - `ms` = BFS runtime in milliseconds  
-- `OK` implies ourput of parallel code matches serial output 
+- `OK` means parallel matches serial  
