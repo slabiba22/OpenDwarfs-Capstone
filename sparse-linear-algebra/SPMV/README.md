@@ -63,11 +63,14 @@ This builds the `spmv` executable.
 ```
 
 ## 6) What the serial code does (`spmv_serial.cpp`)
-- For each row `r`, accumulate 
+
+- For each row $r$, accumulate:
+
   $$
   \text{sum} = \sum_{k=\text{row\_ptr}[r]}^{\text{row\_ptr}[r+1]-1} \text{val}[k] \cdot x[\text{col\_idx}[k]]
-  $$  , then write `y[r] = sum`.
-- Pure C-like loops; no threading; measures only the SPMV loop.
+  $$
+
+  then write $y[r] = \text{sum}$.
 
 ## 7) What the parallel code should do (`spmv_parallel.cpp`)
 - Currently identical to the serial version but with an `int nthreads` argument; this is the file to modify for **OpenMP** parallelization.
