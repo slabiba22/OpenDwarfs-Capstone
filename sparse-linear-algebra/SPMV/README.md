@@ -39,14 +39,6 @@ make
 ```
 This builds the `spmv` executable.
 
-Manual build (optional):
-```bash
-g++ -O3 -std=c++17 main.cpp spmv_serial.cpp spmv_parallel.cpp -o spmv
-```
-If your toolchain is very old you may need:
-```bash
-make LIBS=-lstdc++fs
-```
 
 ## 5) How to run with different options
 **Correctness mode**
@@ -71,7 +63,10 @@ make LIBS=-lstdc++fs
 ```
 
 ## 6) What the serial code does (`spmv_serial.cpp`)
-- For each row `r`, accumulate `sum = Σ_{k=row_ptr[r]}^{row_ptr[r+1]-1} val[k] * x[col_idx[k]]`, then write `y[r] = sum`.
+- For each row `r`, accumulate 
+  $$
+  \text{sum} = \sum_{k=\text{row\_ptr}[r]}^{\text{row\_ptr}[r+1]-1} \text{val}[k] \cdot x[\text{col\_idx}[k]]
+  $$  , then write `y[r] = sum`.
 - Pure C-like loops; no threading; measures only the SPMV loop.
 
 ## 7) What the parallel code should do (`spmv_parallel.cpp`)
