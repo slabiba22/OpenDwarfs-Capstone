@@ -1,5 +1,6 @@
 #include "gol_parallel.h"
 
+
 // Computes the given number of iterations for an n x m array of cells using
 // the given number of threads.
 void gol_parallel(bool* cells, int n, int m, int iterations, int nthreads) {
@@ -12,6 +13,7 @@ void gol_parallel(bool* cells, int n, int m, int iterations, int nthreads) {
     bool* temp;
 
     for(t = 0; t < iterations; ++t) {
+        #pragma omp parallel for num_threads(nthreads) private(j,neighbors) shared (cells, cells_new, n,m) schedule(runtime) 
         for(i = 0; i < n; ++i) {
             for(j = 0; j < m; ++j) {
                 
@@ -47,6 +49,7 @@ void gol_parallel(bool* cells, int n, int m, int iterations, int nthreads) {
     }
 
     if(iterations % 2) {
+        #pragma omp parallel for num_threads(nthreads) private(j) shared(cells, cells_new, n, m) schedule(runtime) 
         for(i = 0; i < n; ++i) {
             for(j = 0; j < m; ++j) {
                 cells_new[i * m + j] = cells[i * m + j];
