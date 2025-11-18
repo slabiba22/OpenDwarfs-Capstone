@@ -1,6 +1,7 @@
 #include <vector>
 #include <cmath>
 #include <stdexcept>
+#include <omp.h>
 
 // identical to serial 
 void lu_decompose_parallel(std::vector<std::vector<double>>& A) {
@@ -13,10 +14,12 @@ void lu_decompose_parallel(std::vector<std::vector<double>>& A) {
             throw std::runtime_error("Zero/tiny pivot in lu_decompose_parallel (identical impl)");
         }
 
+        #pragma omp parallel for
         for (int i = k + 1; i < N; ++i) {
             A[i][k] /= pivot;
         }
 
+        #pragma omp parallel for
         for (int i = k + 1; i < N; ++i) {
             const double Lik = A[i][k];
             for (int j = k + 1; j < N; ++j) {
