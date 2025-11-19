@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <cstdint>
+#include <omp.h>
 
 // Intentionally identical to serial; students will parallelize later.
 void fft_parallel(float* __restrict real_op,
@@ -14,6 +15,7 @@ void fft_parallel(float* __restrict real_op,
     int a = N / 2;
 
     for (int j = 0; j < iters; ++j) {
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int i = 0; i < N; ++i) {
             if (!(i & n)) {
                 std::size_t op_index = ( (static_cast<std::size_t>(i) * static_cast<std::size_t>(a)) %
