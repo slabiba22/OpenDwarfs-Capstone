@@ -2,6 +2,7 @@
 // For now identical to serial, but keeps an nthreads argument for students to parallelize later.
 #include <vector>
 #include <chrono>
+#include <omp.h>
 
 double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int* cost, int nthreads){
   (void)nthreads; // placeholder; students will use this
@@ -27,6 +28,7 @@ double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int*
 
     // kernel1
     for(int tid=0; tid<n; ++tid){
+      #pragma omp parallel for num_threads(nthreads) schedule(dynamic, 64)
       if(graph_mask[tid]!=0){
         graph_mask[tid]=0;
         int start = row_ptr[tid];
@@ -42,6 +44,7 @@ double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int*
     }
 
     // kernel2
+    #pragma omp parallel for num_threads(nthreads) reduction(|:over) schedule(static)
     for(int tid=0; tid<n; ++tid){
       if(updating_mask[tid]==1){
         graph_mask[tid]=1;
