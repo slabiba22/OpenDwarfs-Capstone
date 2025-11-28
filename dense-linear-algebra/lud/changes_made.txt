@@ -1,0 +1,8 @@
+OpenACC
+
+1) Made a new lub_parallel_ACC.cpp with the OpenACC implementation
+2) Made a new Makerfile and add all the openACC tags
+3) Changed main.cpp to make sure openMP and openACC results go to their respective csv files
+3) Open a terminal in local computer and ssh'd into the maxwell gpu node
+4) Ran make -f Makerfile_acc clean to compile 
+5) Ran ./lud_acc -c -p 

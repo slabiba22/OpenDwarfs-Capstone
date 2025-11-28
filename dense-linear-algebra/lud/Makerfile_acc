@@ -1,0 +1,42 @@
+# === Makefile.acc for LUD (OpenACC on maxwell) ===
+
+ACC_CXX      ?= nvc++
+STD          ?= -std=c++17
+ACCFLAGS     ?= -acc -gpu=cuda12.3 -Minfo=accel
+WARN         ?= -Wall
+DEBUGSYM     ?= -g
+
+ACC_CXXFLAGS ?= $(STD) -O3 $(WARN) $(DEBUGSYM) $(ACCFLAGS)
+ACC_LDFLAGS  ?= $(ACCFLAGS)
+
+SRC_ACC := main.cpp lud_serial.cpp lud_parallel_ACC.cpp
+OBJ_ACC := $(SRC_ACC:.cpp=.o)
+BIN_ACC := lud_acc
+
+.PHONY: all
+all: $(BIN_ACC)
+
+# Link
+lud_acc: $(OBJ_ACC)
+	$(ACC_CXX) $(ACC_CXXFLAGS) $^ -o $@ $(ACC_LDFLAGS)
+
+# Compile
+%.o: %.cpp
+	$(ACC_CXX) $(ACC_CXXFLAGS) -c $< -o $@
+
+.PHONY: run_acc
+run_acc: lud_acc
+	./lud_acc -c
+
+.PHONY: clean
+clean:
+	$(RM) -f $(OBJ_ACC) $(BIN_ACC)
+
+# Print variables (for debugging Make)
+.PHONY: vars
+vars:
+	@echo "CXXFLAGS = $(CXXFLAGS)"
+	@echo "LDFLAGS  = $(LDFLAGS)"
+	@echo "SRC      = $(SRC)"
+	@echo "OBJ      = $(OBJ)"
+	@echo "BIN      = $(BIN)"

@@ -207,8 +207,21 @@ int main(int argc, char** argv) {
             {8, 16, 16},    // N=2048
             {16, 16, 16}    // N=4096
         };
-        run_perf_and_log_csv(cases, "lud_perf.csv");
-    } else {
+
+        std::string exe_name = argv[0];
+        std::string csv_name;
+        if (exe_name.find("lud_acc") != std::string::npos) 
+        {
+            csv_name = "lud_perf_acc.csv";   // OpenACC results
+        } 
+        else 
+        {
+            csv_name = "lud_perf.csv";       // default (OpenMP or serial)
+        } 
+            run_perf_and_log_csv(cases, csv_name);
+    } 
+    
+    else {
         usage(argv[0]);
     }
     return 0;
