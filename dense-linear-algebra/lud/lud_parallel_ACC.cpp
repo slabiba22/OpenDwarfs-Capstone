@@ -11,7 +11,6 @@ void lu_decompose_parallel(std::vector<std::vector<double>>& A) {
         throw std::runtime_error("Matrix must be square in lu_decompose_parallel (OpenACC)");
     }
 
-    // 1) Pack A into a flat contiguous buffer Af (host side only)
     std::vector<double> Af(N * N);
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
@@ -22,7 +21,6 @@ void lu_decompose_parallel(std::vector<std::vector<double>>& A) {
     // Raw pointer that the GPU will see
     double* a = Af.data();
 
-    // 2) Move 'a' to the device and keep it there for the whole factorization
     #pragma acc data copy(a[0:N*N])
     {
         for (int k = 0; k < N; ++k) {
@@ -35,14 +33,11 @@ void lu_decompose_parallel(std::vector<std::vector<double>>& A) {
                 throw std::runtime_error("Zero or tiny pivot in lu_decompose_parallel (OpenACC)");
             }
 
-            // 2a) Divide column entries by pivot: A[i][k] /= pivot
             #pragma acc parallel loop present(a)
             for (int i = k + 1; i < N; ++i) {
                 a[i * N + k] /= pivot;
             }
 
-            // 2b) Update trailing submatrix:
-            //     A[i][j] -= A[i][k] * A[k][j] for i, j > k
             #pragma acc parallel loop collapse(2) present(a)
             for (int i = k + 1; i < N; ++i) {
                 for (int j = k + 1; j < N; ++j) {
@@ -50,9 +45,7 @@ void lu_decompose_parallel(std::vector<std::vector<double>>& A) {
                 }
             }
         }
-    } // 'a[0:N*N]' is copied back into Af here
-
-    // 3) Unpack Af (via 'a') back into A on the host
+    } 
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             A[i][j] = a[i * N + j];
