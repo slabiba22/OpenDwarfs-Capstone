@@ -7,10 +7,6 @@ void lu_decompose_parallel(std::vector<std::vector<double>>& A) {
     const int N = (int)A.size();
     const double eps = 1e-30;
 
-    if (N == 0 || (int)A[0].size() != N) {
-        throw std::runtime_error("Matrix must be square in lu_decompose_parallel (OpenACC)");
-    }
-
     std::vector<double> Af(N * N);
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
@@ -28,7 +24,7 @@ void lu_decompose_parallel(std::vector<std::vector<double>>& A) {
             #pragma acc update self(a[k * N + k:1])
             double pivot = a[k * N + k];
 
-            if (std::fabs(pivot) < eps) {
+            if (std::abs(pivot) < eps) {
                 // If you don't want exceptions here, you can set a flag instead
                 throw std::runtime_error("Zero or tiny pivot in lu_decompose_parallel (OpenACC)");
             }
