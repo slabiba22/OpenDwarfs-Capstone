@@ -50,7 +50,15 @@ int main(int argc, char** argv) {
     if (mode == "-p") {
         // Prepare output path and file
         const std::string out_dir  = "../output";
-        const std::string out_path = out_dir + "/results.csv";
+
+
+        std::string exe_name = argv[0];
+        std::string out_file = "results.csv";
+        if (exe_name.find("nq_acc") != std::string::npos) {
+            out_file = "results_acc.csv";
+        }
+        
+        const std::string out_path = out_dir + "/" + out_file;
         std::error_code ec;
         std::filesystem::create_directories(out_dir, ec); // ok if it already exists
 
