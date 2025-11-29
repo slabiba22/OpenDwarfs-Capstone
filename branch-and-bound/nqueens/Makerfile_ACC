@@ -1,0 +1,26 @@
+ACC_CXX      := nvc++
+ACCFLAGS     := -acc -gpu=cuda12.3 -Minfo=accel
+ACC_CXXFLAGS := -O3 -std=c++17 -Wall -g $(ACCFLAGS)
+SRCS_ACC := main.cpp nq_serial.cpp nq_parallel_ACC.cpp
+OBJS_ACC := $(SRCS_ACC:.cpp=.o)
+
+TARGET_ACC := nq_acc
+
+all: $(TARGET_ACC)
+
+$(TARGET_ACC): $(OBJS_ACC)
+	$(ACC_CXX) $(ACC_CXXFLAGS) -o $@ $^
+
+
+%.o: %.cpp
+	$(ACC_CXX) $(ACC_CXXFLAGS) -c $< -o $@
+
+run-correctness: $(TARGET_ACC)
+	./$(TARGET_ACC) -c
+
+run-perf: $(TARGET_ACC)
+	./$(TARGET_ACC) -p > results_acc.csv
+	@echo "CSV written to results_acc.csv"
+
+clean:
+	rm -f $(OBJS_ACC) $(TARGET_ACC) results_acc.csv
