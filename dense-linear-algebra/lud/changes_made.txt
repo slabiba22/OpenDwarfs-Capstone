@@ -6,3 +6,11 @@ OpenACC
 3) Open a terminal in local computer and ssh'd into the maxwell gpu node
 4) Ran make -f Makerfile_acc clean to compile 
 5) Ran ./lud_acc -c -p 
+
+Notes:
+
+1) After testing the OpenACC version if make doesn't work for the openMP version run these
+   two commands to handle linking issues
+
+   a) make clean
+   b) rm -f *.o lud lud_acc
