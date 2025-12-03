@@ -23,7 +23,9 @@ double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int*
   auto t0 = clock::now();
 
   int over;
-  #pragma acc data copy(a[0:n*n])
+  int m = row_ptr[n];
+  #pragma acc data copy(row_ptr[0:n+1], col_idx[0:m], cost[0:n], \
+    graph_mask[0:n], updating_mask[0:n], visited[0:n])
   do{
     over = 0;
 
