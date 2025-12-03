@@ -1,66 +1,74 @@
 // bfs_parallel_ACC.cpp
-// For now identical to serial, but keeps an nthreads argument for students to parallelize later.
-#include <vector>
 #include <chrono>
-#include <omp.h>
+#include <cstring>
 
-double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int* cost, int nthreads){
-  (void)nthreads; // placeholder; students will use this
-  if(n<=0 || !row_ptr || !col_idx || !cost) return 0.0;
+double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int* cost, int nthreads) {
+    (void)nthreads; // placeholder, not used in GPU
 
-  std::vector<int> graph_mask(n,0);
-  std::vector<int> updating_mask(n,0);
-  std::vector<int> visited(n,0);
+    if (n <= 0 || !row_ptr || !col_idx || !cost) return 0.0;
+    if (src < 0 || src >= n) return 0.0;
 
-  for(int i=0;i<n;i++) cost[i] = -1;
-  if(src<0 || src>=n) return 0.0;
+    int* graph_mask    = new int[n];
+    int* updating_mask = new int[n];
+    int* visited       = new int[n];
 
-  graph_mask[src]=1;
-  visited[src]=1;
-  cost[src]=0;
+    memset(graph_mask, 0, n * sizeof(int));
+    memset(updating_mask, 0, n * sizeof(int));
+    memset(visited, 0, n * sizeof(int));
 
-  using clock = std::chrono::high_resolution_clock;
-  auto t0 = clock::now();
+    for (int i = 0; i < n; i++) cost[i] = -1;
 
-  int over;
-  int m = row_ptr[n];
-  #pragma acc data copy(row_ptr[0:n+1], col_idx[0:m], cost[0:n], \
-    graph_mask[0:n], updating_mask[0:n], visited[0:n])
-  do{
-    over = 0;
+    graph_mask[src] = 1;
+    visited[src]    = 1;
+    cost[src]       = 0;
 
-    // kernel1
-    #pragma acc parallel loop
-    for(int tid=0; tid<n; ++tid){
-      if(graph_mask[tid]!=0){
-        graph_mask[tid]=0;
-        int start = row_ptr[tid];
-        int end   = row_ptr[tid+1];
-        for(int i=start; i<end; ++i){
-          int id = col_idx[i];
-          if(!visited[id]){
-            cost[id] = cost[tid] + 1;
-            updating_mask[id] = 1;
-          }
+    using clock = std::chrono::high_resolution_clock;
+    auto t0 = clock::now();
+
+    int over;
+
+    #pragma acc data copyin(row_ptr[0:n+1], col_idx[0:row_ptr[n]]) \
+                     copy(cost[0:n], graph_mask[0:n], updating_mask[0:n], visited[0:n])
+    do {
+        over = 0;
+
+        // Kernel 1: expand frontier and update neighbors
+        #pragma acc parallel loop gang vector
+        for (int tid = 0; tid < n; tid++) {
+            if (graph_mask[tid] != 0) {
+                graph_mask[tid] = 0;
+                int start = row_ptr[tid];
+                int end   = row_ptr[tid+1];
+                for (int i = start; i < end; i++) {
+                    int id = col_idx[i];
+                    if (!visited[id]) {  // <- critical!
+                        cost[id] = cost[tid] + 1;
+                        updating_mask[id] = 1;
+                    }
+                }
+            }
         }
-      }
-    }
 
-    // kernel2
-    #pragma acc parallel loop reduction(||:over)
-    for(int tid=0; tid<n; ++tid){
-      if(updating_mask[tid]==1){
-        graph_mask[tid]=1;
-        visited[tid]=1;
-        over=1;
-        updating_mask[tid]=0;
-      }
-    }
-    #pragma acc update self(over)
-  } while(over);
+        // Kernel 2: mark newly visited
+        #pragma acc parallel loop reduction(|:over)
+        for (int tid = 0; tid < n; tid++) {
+            if (updating_mask[tid] == 1) {
+                graph_mask[tid] = 1;
+                visited[tid]    = 1;
+                over = 1;
+                updating_mask[tid] = 0;
+            }
+        }
+         
 
-  auto t1 = clock::now();
-  double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
-  return ms;
+    } while(over);
+
+    auto t1 = clock::now();
+    double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+
+    delete[] graph_mask;
+    delete[] updating_mask;
+    delete[] visited;
+
+    return ms;
 }
-
