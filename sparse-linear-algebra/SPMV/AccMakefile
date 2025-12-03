@@ -1,0 +1,21 @@
+CXX      = nvc++
+CXXFLAGS = -O3 -std=c++17 -acc -ta=nvidia
+LDFLAGS  =
+LIBS     =
+
+SRCS = main.cpp spmv_serial.cpp spmv_parallel.cpp
+OBJS = $(SRCS:.cpp=.o)
+BIN  = spmv_acc
+
+all: $(BIN)
+
+$(BIN): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJS) $(BIN)
+
+.PHONY: all clean
