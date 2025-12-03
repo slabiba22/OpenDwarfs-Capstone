@@ -23,12 +23,15 @@ double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int*
   auto t0 = clock::now();
 
   int over;
+  #pragma acc data copy(row_ptr[0:n+1], col_idx[0:row_ptr[n]]) \
+                     copy(cost[0:n]) \
+                     copy(graph_mask[0:n], updating_mask[0:n], visited[0:n])
   do{
     over = 0;
 
     // kernel1
+    #pragma acc parallel loop
     for(int tid=0; tid<n; ++tid){
-      #pragma omp parallel for num_threads(nthreads) schedule(dynamic, 64)
       if(graph_mask[tid]!=0){
         graph_mask[tid]=0;
         int start = row_ptr[tid];
@@ -44,7 +47,7 @@ double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int*
     }
 
     // kernel2
-    #pragma omp parallel for num_threads(nthreads) reduction(|:over) schedule(static)
+    #pragma acc parallel loop reduction(||:over)
     for(int tid=0; tid<n; ++tid){
       if(updating_mask[tid]==1){
         graph_mask[tid]=1;
@@ -53,6 +56,7 @@ double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int*
         updating_mask[tid]=0;
       }
     }
+    #pragma acc update self(over)
   } while(over);
 
   auto t1 = clock::now();

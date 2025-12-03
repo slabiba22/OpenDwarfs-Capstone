@@ -1,0 +1,44 @@
+# === Makefile.acc for BFS (OpenACC on maxwell) ===
+
+ACC_CXX      ?= nvc++
+STD          ?= -std=c++17
+ACCFLAGS     ?= -acc -gpu=cuda12.3 -Minfo=accel
+WARN         ?= -Wall
+DEBUGSYM     ?= -g
+
+ACC_CXXFLAGS ?= $(STD) -O3 $(WARN) $(DEBUGSYM) $(ACCFLAGS)
+ACC_LDFLAGS  ?= $(ACCFLAGS)
+
+# ----------- BFS Sources -----------
+SRC_ACC := main.cpp bfs_serial.cpp bfs_parallel_ACC.cpp
+OBJ_ACC := $(SRC_ACC:.cpp=.o)
+BIN_ACC := bfs_acc
+
+.PHONY: all
+all: $(BIN_ACC)
+
+# ----------- Link -----------
+bfs_acc: $(OBJ_ACC)
+	$(ACC_CXX) $(ACC_CXXFLAGS) $^ -o $@ $(ACC_LDFLAGS)
+
+# ----------- Compile -----------
+%.o: %.cpp
+	$(ACC_CXX) $(ACC_CXXFLAGS) -c $< -o $@
+
+.PHONY: run_acc
+run_acc: bfs_acc
+	./bfs_acc -c -p
+
+.PHONY: clean
+clean:
+	$(RM) -f $(OBJ_ACC) $(BIN_ACC)
+
+# ----------- Debug Print -----------
+.PHONY: vars
+vars:
+	@echo "ACC_CXX      = $(ACC_CXX)"
+	@echo "ACC_CXXFLAGS = $(ACC_CXXFLAGS)"
+	@echo "ACC_LDFLAGS  = $(ACC_LDFLAGS)"
+	@echo "SRC_ACC      = $(SRC_ACC)"
+	@echo "OBJ_ACC      = $(OBJ_ACC)"
+	@echo "BIN_ACC      = $(BIN_ACC)"

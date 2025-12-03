@@ -216,7 +216,12 @@ int main(int argc, char** argv){
       std::fprintf(stderr,"no graphs found under ../data/<name>/<name>.mtx\n");
       return 1;
     }
-    fs::path csv_path = outdir / "bfs_profile.csv";
+    #ifdef _OPENACC
+      fs::path csv_path = outdir / "bfs_profile_acc.csv";   // for openACC
+    #else
+      fs::path csv_path = outdir / "bfs_profile.csv";       // for openMP
+    #endif
+
     for(const auto& mtx : files){
       std::string name = mtx.parent_path().filename().string(); // <name>
       CSR G;
@@ -237,7 +242,11 @@ int main(int argc, char** argv){
                   ms.size()>0?ms[0]:0, ms.size()>1?ms[1]:0, ms.size()>2?ms[2]:0,
                   ms.size()>3?ms[3]:0, ms.size()>4?ms[4]:0, ms.size()>5?ms[5]:0);
     }
-    std::printf("CSV -> %s\n", (outdir / "bfs_profile.csv").string().c_str());
+    #ifdef _OPENACC
+      std::printf("CSV -> %s\n", (outdir / "bfs_profile_acc.csv").string().c_str());
+    #else
+      std::printf("CSV -> %s\n", (outdir / "bfs_profile.csv").string().c_str());
+    #endif
   }
 
   return 0;
