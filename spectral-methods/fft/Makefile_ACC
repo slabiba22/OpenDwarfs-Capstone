@@ -1,0 +1,44 @@
+# === Makefile.acc for FFT (OpenACC on maxwell) ===
+
+ACC_CXX      ?= nvc++
+STD          ?= -std=c++17
+ACCFLAGS     ?= -acc -gpu=cuda12.3 -Minfo=accel
+WARN         ?= -Wall
+DEBUGSYM     ?= -g
+
+ACC_CXXFLAGS ?= $(STD) -O3 $(WARN) $(DEBUGSYM) $(ACCFLAGS)
+ACC_LDFLAGS  ?= $(ACCFLAGS)
+
+# ----------- FFT Sources -----------
+SRC_ACC := main.cpp fft_serial.cpp fft_parallel_acc.cpp
+OBJ_ACC := $(SRC_ACC:.cpp=.o)
+BIN_ACC := fft_acc
+
+.PHONY: all
+all: $(BIN_ACC)
+
+# ----------- Link -----------
+fft_acc: $(OBJ_ACC)
+	$(ACC_CXX) $(ACC_CXXFLAGS) $^ -o $@ $(ACC_LDFLAGS)
+
+# ----------- Compile -----------
+%.o: %.cpp
+	$(ACC_CXX) $(ACC_CXXFLAGS) -c $< -o $@
+
+.PHONY: run_acc
+run_acc: fft_acc
+	./fft_acc -c -p
+
+.PHONY: clean
+clean:
+	$(RM) -f $(OBJ_ACC) $(BIN_ACC)
+
+# ----------- Debug Print -----------
+.PHONY: vars
+vars:
+	@echo "ACC_CXX      = $(ACC_CXX)"
+	@echo "ACC_CXXFLAGS = $(ACC_CXXFLAGS)"
+	@echo "ACC_LDFLAGS  = $(ACC_LDFLAGS)"
+	@echo "SRC_ACC      = $(SRC_ACC)"
+	@echo "OBJ_ACC      = $(OBJ_ACC)"
+	@echo "BIN_ACC      = $(BIN_ACC)"
