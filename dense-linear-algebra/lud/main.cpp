@@ -210,15 +210,14 @@ int main(int argc, char** argv) {
 
         std::string exe_name = argv[0];
         std::string csv_name;
-        if (exe_name.find("lud_acc") != std::string::npos) 
-        {
-            csv_name = "lud_perf_acc.csv";   // OpenACC results
-        } 
-        else 
-        {
-            csv_name = "lud_perf.csv";       // default (OpenMP or serial)
-        } 
-            run_perf_and_log_csv(cases, csv_name);
+       if (exe_name.find("lud_acc") != std::string::npos) {
+        csv_name = "lud_perf_acc.csv";           // OpenACC results
+        } else if (exe_name.find("lud_improved") != std::string::npos) {
+            csv_name = "lud_perf_improved.csv";      // improved parallel
+        } else {
+            csv_name = "lud_perf.csv";               // default name
+        }
+        run_perf_and_log_csv(cases, csv_name);
     } 
     
     else {
