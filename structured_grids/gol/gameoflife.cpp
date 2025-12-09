@@ -118,29 +118,41 @@ bool correctness_test(const char* filename, int iterations, int threads, int ste
 }
 
 void performance_tests() {
+    int serial_xl = 0;
+    int serial_xxl = 0;
     printf("PERFORMANCE TESTS:\n");
-    performance_test("config/xl_glider", 1000, 2);
-    performance_test("config/xl_glider", 1000, 4);
-    performance_test("config/xl_glider", 1000, 8);
-    performance_test("config/xxl_random", 1000, 8);
-}
+    performance_test("config/xl_glider", 1000, 2, &serial_xl);
+    performance_test("config/xl_glider", 1000, 4, &serial_xl);
+    performance_test("config/xl_glider", 1000, 8, &serial_xl);
+    performance_test("config/xl_glider", 1000, 16, &serial_xl);   // added
+    performance_test("config/xl_glider", 1000, 32, &serial_xl);   // added
+    performance_test("config/xl_glider", 1000, 64, &serial_xl);   // added
+    performance_test("config/xxl_random", 1000, 2, &serial_xxl);   // added
+    performance_test("config/xxl_random", 1000, 4, &serial_xxl);
+    performance_test("config/xxl_random", 1000, 8, &serial_xxl);
+    performance_test("config/xxl_random", 1000, 16, &serial_xxl);  // added
+    performance_test("config/xxl_random", 1000, 32, &serial_xxl);  // added
+    performance_test("config/xxl_random", 1000, 64, &serial_xxl);  // added
 
-void performance_test(const char* filename, int iterations, int threads) {
+}
+void performance_test(const char* filename, int iterations, int threads, int* serial_time) {
     struct timeval start, end;
-    int n, m, serial_time, parallel_time;
+    int n, m, parallel_time;
     bool* board1;
     bool* board2;
     input_game(&board1, &n, &m, filename);
     input_game(&board2, &n, &m, filename);
     printf("Running %s (%d iterations, %d threads)\n", filename, iterations, threads);
 
-    printf("Serial time: ");
-    fflush(stdout);
-    gettimeofday(&start, NULL);
-    gol_serial(board1, n, m, iterations);
-    gettimeofday(&end, NULL);
-    serial_time = ms_difference(start, end);
-    printf("%d ms\n", serial_time);
+    if(*serial_time == 0){
+        printf("Serial time: ");
+        fflush(stdout);
+        gettimeofday(&start, NULL);
+        gol_serial(board1, n, m, iterations);
+        gettimeofday(&end, NULL);
+        *serial_time = ms_difference(start, end);
+        printf("%d ms\n", *serial_time);
+    }
 
     printf("Parallel time: ");
     fflush(stdout);
@@ -152,7 +164,7 @@ void performance_test(const char* filename, int iterations, int threads) {
     parallel_time = ms_difference(start, end);
     printf("%d ms\n", parallel_time);
     
-    printf("Speedup: %.4f\n", (float)serial_time/parallel_time);
+    printf("Speedup: %.4f\n", (float)(*serial_time)/parallel_time);
     free(board1);
     free(board2);
 }
