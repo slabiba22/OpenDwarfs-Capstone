@@ -121,20 +121,30 @@ void performance_tests() {
     int serial_xl = 0;
     int serial_xxl = 0;
     printf("PERFORMANCE TESTS:\n");
+
+    #ifdef USE_ACC
+    // GPU: only run once per config
+    performance_test("config/xl_glider", 1000, 1, &serial_xl);
+    performance_test("config/xxl_random", 1000, 1, &serial_xxl);
+    #else
+    // CPU: scale with threads
     performance_test("config/xl_glider", 1000, 2, &serial_xl);
     performance_test("config/xl_glider", 1000, 4, &serial_xl);
     performance_test("config/xl_glider", 1000, 8, &serial_xl);
-    performance_test("config/xl_glider", 1000, 16, &serial_xl);   // added
-    performance_test("config/xl_glider", 1000, 32, &serial_xl);   // added
-    performance_test("config/xl_glider", 1000, 64, &serial_xl);   // added
-    performance_test("config/xxl_random", 1000, 2, &serial_xxl);   // added
+    performance_test("config/xl_glider", 1000, 16, &serial_xl);
+    performance_test("config/xl_glider", 1000, 32, &serial_xl);
+    performance_test("config/xl_glider", 1000, 64, &serial_xl);
+
+    performance_test("config/xxl_random", 1000, 2, &serial_xxl);
     performance_test("config/xxl_random", 1000, 4, &serial_xxl);
     performance_test("config/xxl_random", 1000, 8, &serial_xxl);
-    performance_test("config/xxl_random", 1000, 16, &serial_xxl);  // added
-    performance_test("config/xxl_random", 1000, 32, &serial_xxl);  // added
-    performance_test("config/xxl_random", 1000, 64, &serial_xxl);  // added
-
+    performance_test("config/xxl_random", 1000, 16, &serial_xxl);
+    performance_test("config/xxl_random", 1000, 32, &serial_xxl);
+    performance_test("config/xxl_random", 1000, 64, &serial_xxl);
+#endif
 }
+
+
 void performance_test(const char* filename, int iterations, int threads, int* serial_time) {
     struct timeval start, end;
     int n, m, parallel_time;

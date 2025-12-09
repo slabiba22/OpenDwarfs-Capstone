@@ -1,7 +1,7 @@
 # Makefile.acc
 
 CC      = nvc++
-CFLAGS  = -Wall -Werror -O2 -acc
+CFLAGS  = -Wall -Werror -O2 -acc -DUSE_ACC
 LDLIBS  = 
 OBJECTS = gameoflife.o gol_serial.o gol_parallel_acc.o
 

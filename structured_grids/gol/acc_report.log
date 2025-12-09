@@ -1,0 +1,170 @@
+=== RUN 1 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32606 ms
+Parallel time: 650 ms
+Speedup: 50.16310
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 292 ms
+Speedup: 111.6644
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 159679 ms
+Parallel time: 1781 ms
+Speedup: 89.6569
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1666 ms
+Speedup: 95.8457
+
+=== RUN 2 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32372 ms
+Parallel time: 662 ms
+Speedup: 48.9003
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 294 ms
+Speedup: 110.1088
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 158790 ms
+Parallel time: 1799 ms
+Speedup: 88.2657
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1667 ms
+Speedup: 95.2550
+
+=== RUN 3 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32631 ms
+Parallel time: 656 ms
+Speedup: 49.7424
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 292 ms
+Speedup: 111.7500
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 159704 ms
+Parallel time: 1800 ms
+Speedup: 88.7244
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1678 ms
+Speedup: 95.1752
+
+=== RUN 4 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32368 ms
+Parallel time: 652 ms
+Speedup: 49.6442
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 293 ms
+Speedup: 110.4710
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 158721 ms
+Parallel time: 1783 ms
+Speedup: 89.0191
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1666 ms
+Speedup: 95.2707
+
+=== RUN 5 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32381 ms
+Parallel time: 681 ms
+Speedup: 47.5492
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 292 ms
+Speedup: 110.8938
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 158736 ms
+Parallel time: 1763 ms
+Speedup: 90.0374
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1666 ms
+Speedup: 95.2797
+
+=== RUN 6 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32353 ms
+Parallel time: 668 ms
+Speedup: 48.4326
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 296 ms
+Speedup: 109.3007
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 158741 ms
+Parallel time: 1762 ms
+Speedup: 90.0914
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1666 ms
+Speedup: 95.2827
+
+=== RUN 7 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32339 ms
+Parallel time: 673 ms
+Speedup: 48.0520
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 292 ms
+Speedup: 110.7500
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 158702 ms
+Parallel time: 1786 ms
+Speedup: 88.8589
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1664 ms
+Speedup: 95.3738
+
+=== RUN 8 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32336 ms
+Parallel time: 712 ms
+Speedup: 45.4157
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 292 ms
+Speedup: 110.7397
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 159079 ms
+Parallel time: 1767 ms
+Speedup: 90.0277
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1668 ms
+Speedup: 95.3711
+
+=== RUN 9 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32440 ms
+Parallel time: 684 ms
+Speedup: 47.4269
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 292 ms
+Speedup: 111.0959
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 159370 ms
+Parallel time: 1761 ms
+Speedup: 90.4997
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1668 ms
+Speedup: 95.5456
+
+=== RUN 10 ===
+PERFORMANCE TESTS:
+Running config/xl_glider (1000 iterations, 1 thread)
+Serial time: 32411 ms
+Parallel time: 646 ms
+Speedup: 50.1718
+Running config/xl_glider (1000 iterations, 1 thread)
+Parallel time: 293 ms
+Speedup: 110.6177
+Running config/xxl_random (1000 iterations, 1 thread)
+Serial time: 159434 ms
+Parallel time: 1799 ms
+Speedup: 88.6237
+Running config/xxl_random (1000 iterations, 1 thread)
+Parallel time: 1667 ms
+Speedup: 95.6413
+
