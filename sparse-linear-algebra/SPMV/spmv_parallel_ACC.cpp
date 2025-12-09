@@ -1,0 +1,38 @@
+// spmv_parallel_ACC.cpp — y = A * x (CSR), measures only SPMV kernel time.
+#include <vector>
+#include <chrono>
+#include <cstddef>
+
+double spmv_parallel(const int* row_ptr, const int* col_idx, const double* val,
+                     int nrows, const double* x, double* y, int nthreads=1) {
+
+    if(nrows<=0 || !row_ptr || !col_idx || !val || !x || !y) return 0.0;
+
+    using clock = std::chrono::high_resolution_clock;
+    auto t0 = clock::now();
+
+    // main SPMV kernel
+    #pragma acc data copyin(row_ptr[0:nrows+1], col_idx[:row_ptr[nrows]], val[:row_ptr[nrows]], x[0:nrows]) \
+                     copy(y[0:nrows])
+    {
+        // zero output
+        #pragma acc parallel loop
+        for(int r=0; r<nrows; ++r) y[r] = 0.0;
+
+        #pragma acc parallel loop gang vector
+        for(int r=0; r<nrows; ++r){
+            double sum = 0.0;
+            int start = row_ptr[r];
+            int end   = row_ptr[r+1];
+            for(int k=start; k<end; ++k){
+                int c = col_idx[k];
+                sum += val[k] * x[c];
+            }
+            y[r] = sum;
+        }
+    }
+
+    auto t1 = clock::now();
+    double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+    return ms;
+}

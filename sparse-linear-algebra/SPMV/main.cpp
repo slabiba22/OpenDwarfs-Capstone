@@ -2,6 +2,9 @@
 // Flags:
 //   -c : correctness on hollywood-2009; runs threads = 1,2,8,16 and checks vs serial
 //   -p : profile ALL graphs under ../data; threads = 1,2,4,8,16,32; writes ../output/spmv_profile.csv (no MTEPS)
+//
+// Notes:
+// - Measures *only* SPMV time (kernel), not I/O/build.
 
 #include <cstdio>
 #include <cstdlib>
@@ -10,7 +13,6 @@
 #include <cstring>
 #include <string>
 #include <vector>
-#include <utility>
 #include <fstream>
 #include <sstream>
 #include <chrono>
@@ -159,15 +161,6 @@ static void append_csv_row_ext(const fs::path& csv_path,
       <<sp(1)<<","<<sp(2)<<","<<sp(3)<<","<<sp(4)<<","<<sp(5)<<"\n";
 }
 
-static bool vec_equal(const std::vector<double>& a, const std::vector<double>& b, double eps=1e-9){
-  if(a.size()!=b.size()) return false;
-  for(size_t i=0;i<a.size();++i){
-    double diff = std::fabs(a[i]-b[i]);
-    if(diff > eps * std::max(1.0, std::fabs(a[i]))) return false;
-  }
-  return true;
-}
-
 // ---- main
 int main(int argc, char** argv){
   bool do_profile=false, do_correct=false;
@@ -201,13 +194,14 @@ int main(int argc, char** argv){
       std::vector<double> y(A.nrows, 0.0);
       double ms_par = spmv_parallel(A.row_ptr.data(), A.col_idx.data(), A.val.data(),
                                     A.nrows, x.data(), y.data(), nt);
-      bool ok = vec_equal(y_ref, y, 1e-9);
+      bool ok = true;
+      for(int i=0;i<A.nrows;i++){ if(std::fabs(y[i]-y_ref[i])>1e-9){ ok=false; break; } }
       std::printf("[-c] parallel : threads=%d  ms=%.3f  %s\n",
                   nt, ms_par, ok ? "OK" : "MISMATCH");
     }
   }
 
-  // -p: profile all graphs with thread sets 1,2,4,8,16,32 -> CSV (no MTEPS)
+  // -p: profile all graphs with thread sets 1,2,4,8,16,32 -> CSV
   if(do_profile){
     auto files = find_all_graphs_under_data();
     if(files.empty()){
@@ -215,6 +209,7 @@ int main(int argc, char** argv){
       return 1;
     }
     fs::path csv_path = outdir / "spmv_profile.csv";
+
     for(const auto& mtx : files){
       std::string name = mtx.parent_path().filename().string(); // <name>
       CSR A;
@@ -231,7 +226,7 @@ int main(int argc, char** argv){
       }
       long long nnz = (long long)A.col_idx.size();
       append_csv_row_ext(csv_path, name, A.nrows, A.ncols, nnz, ms);
-      std::printf("[-p] %s : nrows=%d ncols=%d nnz=%lld  t1=%.3fms t2=%.3f t4=%.3f t8=%.3f t16=%.3f t32=%.3f\n",
+      std::printf("[-p] %s : nrows=%d ncols=%d nnz=%lld  t1=%.3f t2=%.3f t4=%.3f t8=%.3f t16=%.3f t32=%.3f\n",
                   name.c_str(), A.nrows, A.ncols, nnz,
                   ms.size()>0?ms[0]:0, ms.size()>1?ms[1]:0, ms.size()>2?ms[2]:0,
                   ms.size()>3?ms[3]:0, ms.size()>4?ms[4]:0, ms.size()>5?ms[5]:0);
@@ -241,4 +236,3 @@ int main(int argc, char** argv){
 
   return 0;
 }
-
