@@ -1,0 +1,23 @@
+# Makefile.acc
+
+CC      = nvc++
+CFLAGS  = -Wall -Werror -O2 -acc
+LDLIBS  = 
+OBJECTS = gameoflife.o gol_serial.o gol_parallel_acc.o
+
+all: gameoflife_acc
+
+gameoflife.o: gameoflife.cpp gameoflife.h
+	$(CC) $(CFLAGS) -c gameoflife.cpp
+
+gol_serial.o: gol_serial.cpp gol_serial.h
+	$(CC) $(CFLAGS) -c gol_serial.cpp
+
+gol_parallel_acc.o: gol_parallel_acc.cpp gol_parallel.h
+	$(CC) $(CFLAGS) -c gol_parallel_acc.cpp
+
+gameoflife_acc: $(OBJECTS)
+	$(CC) -o gameoflife_acc $(CFLAGS) $(OBJECTS) $(LDLIBS)
+
+clean:
+	rm -f *.o *~ gameoflife_acc
