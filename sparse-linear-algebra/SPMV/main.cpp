@@ -231,8 +231,11 @@ int main(int argc, char** argv){
                   ms.size()>0?ms[0]:0, ms.size()>1?ms[1]:0, ms.size()>2?ms[2]:0,
                   ms.size()>3?ms[3]:0, ms.size()>4?ms[4]:0, ms.size()>5?ms[5]:0);
     }
-    std::printf("CSV -> %s\n", (outdir / "spmv_profile.csv").string().c_str());
+    #ifdef _OPENACC
+      std::printf("CSV -> %s\n", (outdir / "spmv_profile_acc.csv").string().c_str());
+    #else
+      std::printf("CSV -> %s\n", (outdir / "spmv_profile.csv").string().c_str());
+    #endif  
   }
-
   return 0;
 }

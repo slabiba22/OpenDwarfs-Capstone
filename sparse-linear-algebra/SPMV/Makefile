@@ -8,8 +8,8 @@
 #
 # Note: On very old GCC (e.g., 8.x), you may need:  make LIBS=-lstdc++fs
 
-CXX       ?= g++
-CXXFLAGS  ?= -O3 -std=c++17 -Wall -Wextra -pedantic
+CXX       ?= g++ -fopenmp
+CXXFLAGS  ?= -O3 -std=c++17 -Wall -Wextra -pedantic -fopenmp
 LDFLAGS   ?=
 LIBS      ?=
 
