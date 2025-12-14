@@ -208,7 +208,12 @@ int main(int argc, char** argv){
       std::fprintf(stderr,"no matrices found under ../data/<name>/<name>.mtx\n");
       return 1;
     }
-    fs::path csv_path = outdir / "spmv_profile.csv";
+    
+    #ifdef _OPENACC
+      fs::path csv_path = outdir / "spmv_profile_acc.csv";
+    #else
+     fs::path csv_path = outdir / "spmv_profile.csv";
+    #endif  
 
     for(const auto& mtx : files){
       std::string name = mtx.parent_path().filename().string(); // <name>

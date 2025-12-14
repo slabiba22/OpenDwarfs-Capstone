@@ -8,7 +8,7 @@ void fft_parallel(float* __restrict real_op,
                   int N,
                   const float* __restrict real_weight,
                   const float* __restrict imag_weight,
-                  int /*nthreads*/)
+                  int nthreads)
 {
     int iters = 0; { int t = N; while (t > 1) { t >>= 1; ++iters; } }
     int n = 1;

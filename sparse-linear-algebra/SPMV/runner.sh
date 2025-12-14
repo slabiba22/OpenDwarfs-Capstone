@@ -4,7 +4,7 @@
 RUNS=10
 
 OUTDIR="../output"
-SRC="$OUTDIR/spmv_profile.csv"
+SRC="$OUTDIR/spmv_profile_acc.csv"
 DEST="$OUTDIR/spmv_results_omp_10runs.csv"
 
 mkdir -p "$OUTDIR"
@@ -12,7 +12,7 @@ rm -f "$DEST"
 
 for run in $(seq 1 $RUNS); do
   echo "=== Run $run / $RUNS ==="
-  ./spmv -p   
+  ./spmv_acc -p   
 
   if [ "$run" -eq 1 ]; then
     # First run: copy header and prepend "run," to it
