@@ -5,14 +5,14 @@ RUNS=10
 
 OUTDIR="."
 SRC="$OUTDIR/fft_perf.csv"
-DEST="$OUTDIR/fft_results_acc_10runs.csv"
+DEST="$OUTDIR/fft_results_omp_10runs.csv"
 
 mkdir -p "$OUTDIR"
 rm -f "$DEST"
 
 for run in $(seq 1 $RUNS); do
   echo "=== Run $run / $RUNS ==="
-  ./fft_acc -p   
+  ./fft_app -p   
 
   if [ "$run" -eq 1 ]; then
     # First run: copy header and prepend "run," to it
