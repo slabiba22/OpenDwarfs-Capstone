@@ -1,4 +1,4 @@
-// spmv_parallel.cpp — y = A * x (CSR), measures only SPMV kernel time.
+// spmv_parallel_ACC.cpp — y = A * x (CSR), measures only SPMV kernel time.
 #include <vector>
 #include <chrono>
 
@@ -7,27 +7,35 @@ double spmv_parallel(const int* row_ptr, const int* col_idx, const double* val,
     if(nrows<=0 || !row_ptr || !col_idx || !val || !x || !y) return 0.0;
 
     using clock = std::chrono::high_resolution_clock;
+
+    // main SPMV kernel
     auto t0 = clock::now();
 
-     // main SPMV kernel
-    #pragma acc data copyin(val[0:row_ptr[nrows]], col_idx[0:row_ptr[nrows]], x[0:nrows]) \
+    #pragma acc data copyin(row_ptr[0:nrows+1], \
+                            val[0:row_ptr[nrows]], \
+                            col_idx[0:row_ptr[nrows]], \
+                            x[0:nrows]) \
                      copyout(y[0:nrows])
     {
-        // parallellize loop
+        // parallelize loop
         #pragma acc parallel loop
-        for (int r = 0; r < nrows; ++r) y[r] = 0.0;
+        for (int r = 0; r < nrows; ++r)
+            y[r] = 0.0;
 
         #pragma acc parallel loop
         for (int r = 0; r < nrows; ++r) {
             double sum = 0.0;
             int start = row_ptr[r];
             int end   = row_ptr[r+1];
-            for (int k=start; k<end; ++k){
+            for (int k = start; k < end; ++k){
                 int c = col_idx[k];
                 sum += val[k] * x[c];
             }
             y[r] = sum;
         }
+
+        // ensure kernel completion before timing
+        #pragma acc wait
     }
 
     auto t1 = clock::now();
