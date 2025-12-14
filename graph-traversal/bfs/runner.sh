@@ -4,15 +4,15 @@
 RUNS=10
 
 OUTDIR="../output"
-SRC="$OUTDIR/bfs_profile_acc.csv"
-DEST="$OUTDIR/bfs_results_acc_10runs.csv"
+SRC="$OUTDIR/bfs_profile.csv"
+DEST="$OUTDIR/bfs_results_mp_10runs.csv"
 
 mkdir -p "$OUTDIR"
 rm -f "$DEST"
 
 for run in $(seq 1 $RUNS); do
   echo "=== Run $run / $RUNS ==="
-  ./bfs_acc -p
+  ./bfs -p
 
   if [ "$run" -eq 1 ]; then
     # First run: copy header and prepend "run," to it
