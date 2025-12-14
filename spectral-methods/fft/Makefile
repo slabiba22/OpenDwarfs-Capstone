@@ -1,5 +1,5 @@
 CXX      := g++
-CXXFLAGS := -g -O3 -std=c++17
+CXXFLAGS := -g -O3 -std=c++17 -fopenmp
 LDFLAGS  := 
 
 # sources and target
