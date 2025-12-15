@@ -12,7 +12,7 @@ rm -f "$DEST"
 
 for run in $(seq 1 $RUNS); do
   echo "=== Run $run / $RUNS ==="
-  ./fft_app -p   
+  ./fft -p   
 
   if [ "$run" -eq 1 ]; then
     # First run: copy header and prepend "run," to it
