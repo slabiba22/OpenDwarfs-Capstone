@@ -5,7 +5,7 @@
 #include <omp.h>
 
 double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int* cost, int nthreads){
-  //(void)nthreads; // placeholder; students will use this
+  (void)nthreads; // placeholder; students will use this
   if(n<=0 || !row_ptr || !col_idx || !cost) return 0.0;
 
   std::vector<int> graph_mask(n,0);
@@ -26,10 +26,9 @@ double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int*
   do{
     over = 0;
 
-    // kernel1
+    // kernel1: update cost of neighbors and mark them to be selected as the frontier nodes for next iterations
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic, 64)
     for(int tid=0; tid<n; ++tid){
-
       if(graph_mask[tid]!=0){
         graph_mask[tid]=0;
         int start = row_ptr[tid];
@@ -44,7 +43,7 @@ double bfs_parallel(const int* row_ptr, const int* col_idx, int n, int src, int*
       }
     }
 
-    // kernel2
+    // kernel2: update mask and visited for nodes from current frontier
     #pragma omp parallel for num_threads(nthreads) reduction(|:over) schedule(static)
     for(int tid=0; tid<n; ++tid){
       if(updating_mask[tid]==1){
